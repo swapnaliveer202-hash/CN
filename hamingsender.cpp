@@ -9,19 +9,16 @@ int main()
     cout << "Enter number of data bits: ";
     cin >> m;
 
-    // Calculate number of parity bits
     while ((1 << r) < (m + r + 1))
-    {
         r++;
-    }
 
     int n = m + r;
-    string data;
+    char code[100];
 
     cout << "Enter data bits: ";
+    string data;
     cin >> data;
 
-    char code[100];
     int j = 0;
 
     // Place data bits and parity bits
@@ -33,21 +30,18 @@ int main()
             code[n - i] = data[m - 1 - j++];
     }
 
-    // Calculate Even Parity Bits
+    // Calculate parity bits
     for (int p = 1; p <= n; p *= 2)
     {
-        int count = 0;
+        int parity = 0;
 
         for (int i = 1; i <= n; i++)
         {
-            if ((i & p) && code[n - i] == '1')
-                count++;
+            if (i & p)
+                parity ^= (code[n - i] - '0');
         }
 
-        if (count % 2 == 0)
-            code[n - p] = '0';
-        else
-            code[n - p] = '1';
+        code[n - p] = parity + '0';
     }
 
     cout << "\nGenerated Hamming Code: ";
