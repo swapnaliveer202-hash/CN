@@ -1,69 +1,70 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <thread>
+#include <chrono>
+
 using namespace std;
 
 int main()
 {
-    int a;
-    cout << "Enter the total no. of frame: ";
-    cin >> a;
-    if (a <= 0)
+    int n;
+
+    // Timer fixed at 3 seconds
+    const int TIMEOUT = 3;
+
+    cout << "Stop and Wait ARQ\n\n";
+
+    // User decides number of frames
+    cout << "Enter the number of frames to be sent: ";
+    cin >> n;
+
+    if (n <= 0)
     {
-        cout << "Invalid frames ";
+        cout << "Invalid number of frames.\n";
         return 0;
     }
 
-    int b = 1;
-    while (b <= a)
+    srand(time(0));
+
+    // Randomly select one frame to be lost
+    int lostFrame = rand() % n + 1;
+
+    for (int i = 1; i <= n; i++)
     {
-        cout << "sending frames:" << b << endl;
+        cout << "Sending Frame " << i << "...\n";
 
-        if (b == 1 || b == 2)
+        // Simulate frame loss
+        if (i == lostFrame)
         {
-            cout << "frame " << b << " received successfully" << endl;
-            cout << " ACK " << b << " received successfully" << endl;
-            b++;
-            cout << endl;
-        }
+            cout << "Frame " << i << " lost!\n";
 
-        else if (b == 3)
-        {
-            cout << "frame " << b << "is lost ";
+            cout << "Timer started for "
+                 << TIMEOUT << " seconds...\n";
 
-            cout << " Timeout timer expired! No ACK received." << endl;
-            cout << " Retransmitting Frame 3 " << endl;
+            // Wait for 3 seconds
+            this_thread::sleep_for(
+                chrono::seconds(TIMEOUT)
+            );
 
-            cout << " Sending Frame 3 (Retransmission) " << endl;
-            cout << " Frame 3 received successfully." << endl;
+            cout << "Timeout occurred.\n";
+            cout << "Retransmitting Frame " << i << "...\n";
 
-            cout << " ACK 3 received successfully " << endl;
-            b++;
-            cout << endl;
-        }
+            cout << "Frame " << i
+                 << " received successfully.\n";
 
-        else if (b == 4)
-        {
-            cout << " Frame 4 received successfully." << endl;
-            cout << " Sending ACK 4" << endl;
-            cout << " ACK 4  LOST in transit" << endl;
-            cout << " Timeout timer expired! ACK not received." << endl;
-            cout << " Retransmitting Frame 4" << endl;
-
-            cout << " Sending Frame 4 (Retransmission)" << endl;
-            cout << " Duplicate Frame 4 detected! Discarding frame copy." << endl;
-
-            cout << " ACK 4 received successfully" << endl;
-            b++;
-            cout << endl;
+            cout << "ACK " << i << " received.\n\n";
         }
         else
         {
-            cout << "frame " << b << " received successfully" << endl;
-            cout << " ACK " << b << " received successfully" << endl;
-            b++;
-            cout << endl;
+            cout << "Frame " << i
+                 << " received successfully.\n";
+
+            cout << "ACK " << i << " received.\n\n";
         }
     }
-      cout << " Transmission Completed Successfully " << endl;
+
+    cout << "Transmission completed successfully.\n";
 
     return 0;
 }
